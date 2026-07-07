@@ -28,6 +28,7 @@ pipeline {
             }
         }
 
+
         stage('Docker Build') {
             steps {
                 sh 'docker build -t $IMAGE_NAME:latest .'
@@ -48,7 +49,20 @@ pipeline {
                 }
             }
         }
+
+       stage('Deploy') {
+          steps {
+             sh '''
+             docker pull raj01docker/flask-nginx-app:latest
+             docker stop flask-container || true
+             docker rm flask-container || true
+             docker run -d --name flask-container -p 5000:5000 raj01docker/flask-nginx-app:latest
+             '''
+          }
+      }
+
     }
+
 
     post {
         always {
